@@ -18,7 +18,8 @@ override_dh_auto_configure:
 	# So --disable-ssp here should be safe. See Bug#829498
 	dh_auto_configure -- \
 		--enable-shared \
-		--disable-ssp
+		--disable-ssp \
+		--enable-connmarktos
 
 override_dh_installchangelogs:
 	dh_installchangelogs -XChanges
