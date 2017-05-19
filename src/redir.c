@@ -256,6 +256,7 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
                                              remote->buf->len, &server->hostname);
         if (ret > 0) {
             server->hostname_len = ret;
+            LOGI("redir to hostname %s", server->hostname);
         }
 
         ev_io_stop(EV_A_ & server_recv_ctx->io);
@@ -488,6 +489,7 @@ remote_send_cb(EV_P_ ev_io *w, int revents)
                 memcpy(abuf->data + abuf->len, server->hostname, server->hostname_len);
                 abuf->len += server->hostname_len;
                 memcpy(abuf->data + abuf->len, &port, 2);
+                LOGI("sending to a hostname %s", server->hostname);
             } else if (AF_INET6 == server->destaddr.ss_family) { // IPv6
                 abuf->data[abuf->len++] = 4;          // Type 4 is IPv6 address
 
@@ -499,6 +501,7 @@ remote_send_cb(EV_P_ ev_io *w, int revents)
                 memcpy(abuf->data + abuf->len,
                        &(((struct sockaddr_in6 *)&(server->destaddr))->sin6_port),
                        2);
+                LOGI("sending to an IPv6");
             } else {                             // IPv4
                 abuf->data[abuf->len++] = 1; // Type 1 is IPv4 address
 
@@ -508,6 +511,7 @@ remote_send_cb(EV_P_ ev_io *w, int revents)
                 abuf->len += in_addr_len;
                 memcpy(abuf->data + abuf->len,
                        &((struct sockaddr_in *)&(server->destaddr))->sin_port, 2);
+                LOGI("sending to an IPv4");
             }
 
             abuf->len += 2;
