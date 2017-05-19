@@ -243,20 +243,22 @@ server_recv_cb(EV_P_ ev_io *w, int revents)
         int ret       = 0;
         uint16_t port = 0;
 
-        if (AF_INET6 == server->destaddr.ss_family) { // IPv6
-            port = ntohs(((struct sockaddr_in6 *)&(server->destaddr))->sin6_port);
-        } else {                             // IPv4
-            port = ntohs(((struct sockaddr_in *)&(server->destaddr))->sin_port);
-        }
-        if (port == http_protocol->default_port)
-            ret = http_protocol->parse_packet(remote->buf->data,
-                                              remote->buf->len, &server->hostname);
-        else if (port == tls_protocol->default_port)
-            ret = tls_protocol->parse_packet(remote->buf->data,
-                                             remote->buf->len, &server->hostname);
-        if (ret > 0) {
-            server->hostname_len = ret;
-            LOGI("redir to hostname %s", server->hostname);
+        if (0) {
+            if (AF_INET6 == server->destaddr.ss_family) { // IPv6
+                port = ntohs(((struct sockaddr_in6 *)&(server->destaddr))->sin6_port);
+            } else {                             // IPv4
+                port = ntohs(((struct sockaddr_in *)&(server->destaddr))->sin_port);
+            }
+            if (port == http_protocol->default_port)
+                ret = http_protocol->parse_packet(remote->buf->data,
+                                                  remote->buf->len, &server->hostname);
+            else if (port == tls_protocol->default_port)
+                ret = tls_protocol->parse_packet(remote->buf->data,
+                                                 remote->buf->len, &server->hostname);
+            if (ret > 0) {
+                server->hostname_len = ret;
+                LOGI("redir to hostname %s", server->hostname);
+            }
         }
 
         ev_io_stop(EV_A_ & server_recv_ctx->io);
